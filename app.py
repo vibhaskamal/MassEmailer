@@ -1,4 +1,6 @@
 import xlrd
+import smtplib
+import ssl
 
 file_name= 'Details.xlsx'
 sheet_name = "Sheet1"
@@ -22,5 +24,23 @@ def read_data(file_name, sheet):
 
 
 file_data = read_data(file_name, sheet_name)
-print(file_data)
-print(file_data[1][1])
+# print(file_data)
+# print(file_data[1][1])
+
+port = 587
+smtp_server = "smtp.gmail.com"
+sender_email = ""
+receiver_email = ""
+password = ""
+message = """\
+Subject: Testing
+
+Testing the proper functioning of this app."""
+
+context = ssl.create_default_context()
+with smtplib.SMTP(smtp_server, port) as server:
+    server.ehlo()
+    server.starttls(context=context)
+    server.ehlo()
+    server.login(sender_email, password)
+    server.sendmail(sender_email, receiver_email, message)
