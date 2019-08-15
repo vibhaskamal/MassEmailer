@@ -5,16 +5,24 @@ import email
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-file_name= 'Details.xlsx'
-sheet_name = "Sheet1"
+"""
+This function reads the data from a sheet in an excel file
 
+@parameter filename: Name of the excel file (with the extension)
+@parameter sheet: Name of the sheet within the excel file, from where the data has to be read
+@return: Data within the specified sheet in the form of arrays
+"""
 def read_data(file_name, sheet):
+    # Opening the excel file and the specified sheet
     workbook = xlrd.open_workbook(file_name)
     worksheet = workbook.sheet_by_name(sheet)
 
+    # Finding number of rows and columns with data in it
     num_rows = worksheet.nrows
     num_cols = worksheet.ncols
 
+    # Looping through each row and storing values for all columns within a row in an array
+    # All the arrays will be part of a parent array: file_data
     file_data =[]
     for row in range(0, num_rows):
         row_data = []
@@ -26,14 +34,15 @@ def read_data(file_name, sheet):
     return file_data
 
 
+file_name= 'Details.xlsx'
+sheet_name = "Sheet1"
+
 file_data = read_data(file_name, sheet_name)
-# print(file_data)
-# print(file_data[1][1])
 
 
-def sendMail():
+def sendMail(sender_email, receiver_email, password, host="smtp.gmail.com", port=587):
     # Setting up the SMTP server details
-    s = smtplib.SMTP(host='smtp.gmail.com', port=587)
+    s = smtplib.SMTP(host, port)
 
     # Start the TLS session
     s.starttls()
@@ -43,8 +52,8 @@ def sendMail():
     msg = MIMEMultipart()
 
     # setup the parameters of the message
-    msg['From']=""
-    msg['To']=""
+    msg['From']=sender_email
+    msg['To']=receiver_email
     msg['Subject']="Python app Part 2"
     
     message = "Hello, how are you?"
@@ -63,6 +72,6 @@ def sendMail():
     print("Done")
 
 
-sendMail()
+sendMail("", "", "")
 
 print("Successful")
