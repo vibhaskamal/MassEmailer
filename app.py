@@ -73,26 +73,17 @@ def sendMail(sender_email, receiver_email, password, subject, message, host="smt
     print("Done")
 
 
-# sendMail("", "", "")
-
 def readFile(filename):
-    with open(filename, 'r', encoding='utf-8') as template_file:
-        template_file_content = template_file.read()
-    return Template(template_file_content)
-
-def readFile2(filename):
     file = open(filename, "r")
     data = file.read()
     return data
 
-# x = readFile("Body.txt")
 
 def createMessage(template_body, person_name, money_value):
-    # body = template_body.substitute(NAME=person_name, AMOUNT=money_value)
     body = template_body.format(NAME=person_name, AMOUNT=money_value)
     return body
 
-text_file = readFile2("Body.txt")
+text_file = readFile("Body.txt")
 msg_body = createMessage(text_file, "John", "50")
 
 sendMail("", "", "", "Amount due", msg_body)
