@@ -58,14 +58,6 @@ def terminateServerSession(server_connection):
 
 
 def sendMail(server_connection, sender_email, receiver_email, password, subject, message):
-    # # Setting up the SMTP server details
-    # s = smtplib.SMTP(host, port)
-
-    # # Start the TLS session
-    # s.starttls()
-
-    # s.login(sender_email, password)      
-
     msg = MIMEMultipart()
 
     # setup the parameters of the message
@@ -83,9 +75,6 @@ def sendMail(server_connection, sender_email, receiver_email, password, subject,
 
     del msg
     
-    # # Terminate the SMTP session and close the connection
-    # s.quit()
-
     print("Done")
 
 
