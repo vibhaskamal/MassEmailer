@@ -1,0 +1,6 @@
+Hi {NAME},
+
+This is a test message.
+You owe the team ${AMOUNT}.
+
+Thank you

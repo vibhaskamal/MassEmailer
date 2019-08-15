@@ -4,6 +4,7 @@ import ssl
 import email
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from string import Template
 
 """
 This function reads the data from a sheet in an excel file
@@ -40,26 +41,26 @@ sheet_name = "Sheet1"
 file_data = read_data(file_name, sheet_name)
 
 
-def sendMail(sender_email, receiver_email, password, host="smtp.gmail.com", port=587):
+def sendMail(sender_email, receiver_email, password, subject, message, host="smtp.gmail.com", port=587):
     # Setting up the SMTP server details
     s = smtplib.SMTP(host, port)
 
     # Start the TLS session
     s.starttls()
 
-    s.login("", "")      
+    s.login(sender_email, password)      
 
     msg = MIMEMultipart()
 
     # setup the parameters of the message
-    msg['From']=sender_email
-    msg['To']=receiver_email
-    msg['Subject']="Python app Part 2"
+    msg['From'] = sender_email
+    msg['To'] = receiver_email
+    msg['Subject'] = subject
     
-    message = "Hello, how are you?"
+    message_body = message
 
     # add in the message body
-    msg.attach(MIMEText(message, 'plain'))
+    msg.attach(MIMEText(message_body, 'plain'))
     
     # send the message via the server set up earlier.
     s.send_message(msg)
@@ -72,6 +73,34 @@ def sendMail(sender_email, receiver_email, password, host="smtp.gmail.com", port
     print("Done")
 
 
-sendMail("", "", "")
+# sendMail("", "", "")
+
+def readFile(filename):
+    with open(filename, 'r', encoding='utf-8') as template_file:
+        template_file_content = template_file.read()
+    return Template(template_file_content)
+
+def readFile2(filename):
+    file = open(filename, "r")
+    data = file.read()
+    return data
+
+# x = readFile("Body.txt")
+
+def createMessage(template_body, person_name, money_value):
+    # body = template_body.substitute(NAME=person_name, AMOUNT=money_value)
+    body = template_body.format(NAME=person_name, AMOUNT=money_value)
+    return body
+
+text_file = readFile2("Body.txt")
+msg_body = createMessage(text_file, "John", "50")
+
+sendMail("", "", "", "Amount due", msg_body)
+
+
+
+
+# print(x)
 
 print("Successful")
+
