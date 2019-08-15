@@ -83,15 +83,25 @@ def createMessage(template_body, person_name, money_value):
     body = template_body.format(NAME=person_name, AMOUNT=money_value)
     return body
 
-text_file = readFile("Body.txt")
-msg_body = createMessage(text_file, "John", "50")
 
-sendMail("", "", "", "Amount due", msg_body)
+def main():
+    file_name= 'Details.xlsx'
+    sheet_name = "Sheet1"
 
+    file_data = read_data(file_name, sheet_name)
 
+    for i in range(1, len(file_data)):
+        name = file_data[i][1]
+        email = file_data[i][3]
+        amount = file_data[i][4]
 
+        text_file = readFile("Body.txt")
 
-# print(x)
+        msg_body = createMessage(text_file, name, amount)
+
+        sendMail("", email, "", "Amount due", msg_body)
+
+main()
 
 print("Successful")
 
