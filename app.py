@@ -41,14 +41,30 @@ sheet_name = "Sheet1"
 file_data = read_data(file_name, sheet_name)
 
 
-def sendMail(sender_email, receiver_email, password, subject, message, host="smtp.gmail.com", port=587):
+def setupServerConnection(sender_email, password, host="smtp.gmail.com", port=587):
     # Setting up the SMTP server details
-    s = smtplib.SMTP(host, port)
+    server_connection = smtplib.SMTP(host, port)
 
     # Start the TLS session
-    s.starttls()
+    server_connection.starttls()
 
-    s.login(sender_email, password)      
+    server_connection.login(sender_email, password)
+
+    return server_connection
+
+
+def terminateServerSession(server_connection):
+    server_connection.quit()
+
+
+def sendMail(server_connection, sender_email, receiver_email, password, subject, message):
+    # # Setting up the SMTP server details
+    # s = smtplib.SMTP(host, port)
+
+    # # Start the TLS session
+    # s.starttls()
+
+    # s.login(sender_email, password)      
 
     msg = MIMEMultipart()
 
@@ -63,12 +79,12 @@ def sendMail(sender_email, receiver_email, password, subject, message, host="smt
     msg.attach(MIMEText(message_body, 'plain'))
     
     # send the message via the server set up earlier.
-    s.send_message(msg)
+    server_connection.send_message(msg)
 
     del msg
     
-    # Terminate the SMTP session and close the connection
-    s.quit()
+    # # Terminate the SMTP session and close the connection
+    # s.quit()
 
     print("Done")
 
@@ -90,16 +106,23 @@ def main():
 
     file_data = read_data(file_name, sheet_name)
 
+    sender_email = ""
+    sender_password = ""
+
+    connection = setupServerConnection(sender_email, sender_password)
+
     for i in range(1, len(file_data)):
         name = file_data[i][1]
-        email = file_data[i][3]
+        receiver_email = file_data[i][3]
         amount = file_data[i][4]
 
         text_file = readFile("Body.txt")
 
         msg_body = createMessage(text_file, name, amount)
 
-        sendMail("", email, "", "Amount due", msg_body)
+        sendMail(connection, sender_email, receiver_email, sender_password, "Amount due", msg_body)
+
+    terminateServerSession(connection)
 
 main()
 
