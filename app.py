@@ -35,12 +35,15 @@ def read_data(file_name, sheet):
     return file_data
 
 
-file_name= 'Details.xlsx'
-sheet_name = "Sheet1"
+"""
+This functions sets up the SMTP server, starts a TLS session and enables the user to log into their account
 
-file_data = read_data(file_name, sheet_name)
-
-
+@parameter sender_email: Sender's email
+@parameter password: Password for sender's email
+@parameter host
+@parameter port
+@return : SMTP server connection instance
+"""
 def setupServerConnection(sender_email, password, host="smtp.gmail.com", port=587):
     # Setting up the SMTP server details
     server_connection = smtplib.SMTP(host, port)
@@ -53,24 +56,37 @@ def setupServerConnection(sender_email, password, host="smtp.gmail.com", port=58
     return server_connection
 
 
+"""
+This function terminates the SMTP server
+
+@parameter server_connection: An SMTP server connection instance
+"""
 def terminateServerSession(server_connection):
     server_connection.quit()
 
 
-def sendMail(server_connection, sender_email, receiver_email, password, subject, message):
+"""
+This function sends the emails from the sender's account to the receiver accounts
+
+@parameter server_connection: An SMTP server connection instance
+@parameter sender_email: Sender's email
+@parameter password
+@parameter password: Password for sender's email
+"""
+def sendMail(server_connection, sender_email, password, receiver_email, subject, message):
     msg = MIMEMultipart()
 
-    # setup the parameters of the message
+    # Setting up the email's contents
     msg['From'] = sender_email
     msg['To'] = receiver_email
     msg['Subject'] = subject
     
     message_body = message
 
-    # add in the message body
+    # Adding the message body
     msg.attach(MIMEText(message_body, 'plain'))
     
-    # send the message via the server set up earlier.
+    # Send the email using the SMTP server connection instance
     server_connection.send_message(msg)
 
     del msg
@@ -78,18 +94,34 @@ def sendMail(server_connection, sender_email, receiver_email, password, subject,
     print("Done")
 
 
+"""
+This function reads the data in the filename given as a parameter
+
+@parameter filname: Name of the file from which the data is to be read
+@return : Data in the file
+"""
 def readFile(filename):
     file = open(filename, "r")
     data = file.read()
     return data
 
 
-def createMessage(template_body, person_name, money_value):
-    body = template_body.format(NAME=person_name, AMOUNT=money_value)
+"""
+This function creates the message to be sent
+
+@parameter text: The text which has to be sent as the body of the email
+@parameter person_name: Name of the person (this parameter is hardcoded and will have to be modified based on the structure of                                      Body.txt)
+@parameter money_value: Amount of money (this parameter is hardcoded and will have to be modified based on the structure of                                      Body.txt)
+@return : Body of the email
+"""
+def createMessage(text, person_name, money_value):
+    body = text.format(NAME=person_name, AMOUNT=money_value)
     return body
 
 
+
 def main():
+    # Excel file and sheets from where the user data is to be extracted
     file_name= 'Details.xlsx'
     sheet_name = "Sheet1"
 
@@ -100,6 +132,7 @@ def main():
 
     connection = setupServerConnection(sender_email, sender_password)
 
+    # Looping through each row in the excel sheet and sending emails created using the data in the excel sheet and Body.txt
     for i in range(1, len(file_data)):
         name = file_data[i][1]
         receiver_email = file_data[i][3]
@@ -109,7 +142,7 @@ def main():
 
         msg_body = createMessage(text_file, name, amount)
 
-        sendMail(connection, sender_email, receiver_email, sender_password, "Amount due", msg_body)
+        sendMail(connection, sender_email, sender_password, receiver_email, "Amount due", msg_body)
 
     terminateServerSession(connection)
 
