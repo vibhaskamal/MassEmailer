@@ -91,7 +91,8 @@ def sendMail(server_connection, sender_email, password, receiver_email, subject,
 
     del msg
     
-    print("Done")
+    # Testing purposes
+    # print("Done")
 
 
 """
@@ -148,5 +149,5 @@ def main():
 
 main()
 
-print("Successful")
+print("END OF PROGRAM")
 
